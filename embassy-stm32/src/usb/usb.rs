@@ -293,6 +293,7 @@ impl<'d, T: Instance> Driver<'d, T> {
         _irq: impl interrupt::typelevel::Binding<T::Interrupt, InterruptHandler<T>> + 'd,
         dp: impl Peripheral<P = impl DpPin<T>> + 'd,
         dm: impl Peripheral<P = impl DmPin<T>> + 'd,
+        vbus: Option<impl embedded_hal_async::digital::Wait>,
     ) -> Self {
         into_ref!(dp, dm);
 

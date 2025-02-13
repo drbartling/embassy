@@ -4,6 +4,8 @@
 use defmt::{panic, *};
 use embassy_executor::Spawner;
 use embassy_futures::join::join;
+use embassy_stm32::exti::ExtiInput;
+use embassy_stm32::gpio::Pull;
 use embassy_stm32::usb::{Driver, Instance};
 use embassy_stm32::{bind_interrupts, peripherals, usb, Config};
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
@@ -28,7 +30,8 @@ async fn main(_spawner: Spawner) {
     info!("Hello World!");
 
     // Create the driver, from the HAL.
-    let driver = Driver::new(p.USB, Irqs, p.PA12, p.PA11);
+    let vbus = ExtiInput::new(p.PA10, p.EXTI10, Pull::Up);
+    let driver = Driver::new(p.USB, Irqs, p.PA12, p.PA11, Some(vbus));
 
     // Create embassy-usb Config
     let config = embassy_usb::Config::new(0xc0de, 0xcafe);
